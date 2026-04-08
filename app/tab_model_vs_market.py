@@ -161,6 +161,13 @@ def render(state, config):
         "US equity options are American-style. Parity deviations include "
         "early exercise premium — not true arbitrage. Treat as indicative."
     )
+    styled_card(
+        "High violation rates are expected. Sources of deviation: "
+        "(1) early exercise premium on American options, "
+        "(2) bid-ask spread noise in mid-price estimation, "
+        "(3) continuous dividend yield approximation vs discrete dividends, "
+        "(4) illiquid far-OTM strikes. These deviations do not indicate arbitrage."
+    )
     parity_df = parity_check.check_parity(chain_iv, S, r, q, config)
 
     if parity_df.empty:

@@ -48,6 +48,11 @@ def render(state, config):
         "Standard Greeks (top) from all 3 models. Higher-order Greeks "
         "(bottom) are BS analytical only — FD on trees amplifies noise."
     )
+    styled_card(
+        "Higher-order Greeks (Vanna, Volga, Charm) are model-dependent and "
+        "numerically sensitive. Values shown are BS analytical — actual market "
+        "Greeks differ under stochastic vol."
+    )
 
     # ── Greeks vs Spot ───────────────────────────────────────
     st.markdown("### Greeks vs Spot Price")

@@ -74,6 +74,19 @@ def render(state, config):
     m3.metric("Hedge Error", f"${summary['hedge_error_total']:.2f}")
     m4.metric("TC Drag", f"${summary['tc_drag']:.2f}")
 
+    # Realized vol from path vs implied vol input
+    log_returns = np.diff(np.log(path))
+    realized_vol = float(np.std(log_returns) * np.sqrt(252))
+    st.markdown(
+        f"**Realized vol:** {realized_vol:.1%} | "
+        f"**Implied vol (input):** {sigma:.1%} | "
+        f"**Spread:** {(realized_vol - sigma):+.1%}"
+    )
+    styled_card(
+        "P&L is negative when realized vol < implied vol — theta decay "
+        "exceeds gamma gains. This is the fundamental driver of hedging P&L."
+    )
+
     # ── Cumulative P&L chart ─────────────────────────────────
     st.markdown("### Cumulative P&L Over Time")
     fig_pnl = go.Figure()

@@ -78,10 +78,20 @@ def render(state, config):
 
     preset_tabs = st.tabs(["Earnings", "Vol Crush", "Rate Hike"])
 
+    exposure_notes = {
+        "earnings": "Long call = long vega. Pre-earnings vol expansion benefits "
+                    "the position; post-earnings vol crush destroys it.",
+        "vol_crush": "Pure vega exposure — shows cost of holding options through "
+                     "vol compression.",
+        "rate_hike": "Rho exposure is small for equity options — included for "
+                     "completeness.",
+    }
+
     for i, (name, tab) in enumerate(zip(
         ["earnings", "vol_crush", "rate_hike"], preset_tabs
     )):
         with tab:
+            styled_card(exposure_notes[name])
             results = sa.apply_preset(S, K, T, r, sigma, q, opt_type,
                                        entry_price=entry_price,
                                        preset_name=name, config=config)

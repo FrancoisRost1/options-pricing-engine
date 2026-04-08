@@ -83,8 +83,8 @@ def render(state, config):
             apply_plotly_theme(fig_smile)
             st.plotly_chart(fig_smile, use_container_width=True)
             styled_card(
-                "Equity smile typically slopes down-left (put skew) — "
-                "lower strikes have higher IV, reflecting crash protection demand."
+                "Equity smile slopes down-left (put skew) — deep OTM puts "
+                "trade at higher IV, reflecting crash protection demand."
             )
 
     with right:
@@ -106,7 +106,7 @@ def render(state, config):
             st.plotly_chart(fig_ts, use_container_width=True)
             styled_card(
                 "Upward-sloping in calm markets (more uncertainty over time). "
-                "Inverted around events (near-term vol spikes)."
+                "Inverted when near-term event risk spikes IV at short maturities."
             )
 
     # ── Skew metrics ─────────────────────────────────────────
