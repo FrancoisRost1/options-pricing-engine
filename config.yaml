@@ -1,0 +1,259 @@
+# ============================================================
+# config.yaml — Options Pricing Engine
+# All weights, thresholds, and assumptions live here.
+# Never hardcode numbers in source code.
+# ============================================================
+
+# ------------------------------------------------------------
+# Data source
+# ------------------------------------------------------------
+data:
+  default_ticker: "AAPL"
+  use_synthetic_fallback: true       # if yfinance fails, generate synthetic chain
+  cache_expiry_minutes: 15           # how long to cache yfinance data
+
+# ------------------------------------------------------------
+# Synthetic data generator (fallback when yfinance unavailable)
+# ------------------------------------------------------------
+synthetic:
+  spot_price: 100.0                  # default underlying price
+  base_vol: 0.25                     # base annualized volatility
+  skew_slope: -0.10                  # vol skew per unit log-moneyness (negative = equity skew)
+  num_expiries: 6                    # number of expiry dates to generate
+  expiry_days: [7, 14, 30, 60, 90, 180]  # DTE for each expiry
+  strikes_per_expiry: 21             # number of strikes per expiry (centered on ATM)
+  strike_spacing_pct: 0.025          # 2.5% spacing between strikes
+  risk_free_rate: 0.045              # rate used in synthetic pricing
+  dividend_yield: 0.015              # yield used in synthetic pricing
+  bid_ask_noise_pct: 0.02            # random spread noise (±2%)
+
+# ------------------------------------------------------------
+# Risk-free rate
+# ------------------------------------------------------------
+risk_free_rate:
+  source: "yfinance"                 # "yfinance" or "fixed"
+  fallback_rate: 0.045               # 4.5% annual — used if yfinance fails
+  short_rate_ticker: "^IRX"          # 13-week T-bill (yfinance returns %)
+  long_rate_ticker: "^TNX"           # 10-year Treasury (yfinance returns %)
+  short_long_dte_threshold: 90       # DTE < this → use short rate; >= this → use long rate
+  # IMPORTANT: yfinance returns percentage values — divide by 100 before use
+  # Simplifying assumption: flat yield curve (no interpolation between tenors)
+
+# ------------------------------------------------------------
+# Dividends
+# ------------------------------------------------------------
+dividends:
+  method: "continuous_yield"         # continuous dividend yield from trailing data
+  fallback_yield: 0.015              # 1.5% — used if yfinance dividend data unavailable
+  # Simplifying assumption: constant continuous yield over option life
+
+# ------------------------------------------------------------
+# Options chain filtering (garbage filter)
+# ------------------------------------------------------------
+chain_filter:
+  max_spread_pct: 0.50               # max (ask-bid)/mid — exclude if wider than 50%
+  min_volume: 10                     # minimum daily volume
+  min_open_interest: 10              # minimum open interest
+  moneyness_bounds:                  # log-moneyness ln(K/S) bounds
+    lower: -0.50                     # ~60% of spot
+    upper: 0.50                      # ~165% of spot
+  min_dte: 1                         # minimum days to expiry (exclude expired/same-day)
+
+# Smart defaults for dashboard initial view
+dashboard_defaults:
+  max_expiries_shown: 4              # nearest N expiries on first load
+  moneyness_default_bounds:
+    lower: -0.15                     # near ATM range for default view
+    upper: 0.15
+  min_volume_default: 50             # stricter filter for default view
+
+# ------------------------------------------------------------
+# Market price handling
+# ------------------------------------------------------------
+market_price:
+  primary: "mid"                     # (bid + ask) / 2
+  # Fallback hierarchy:
+  #   1. Mid price if bid > 0 and ask > 0 and ask > bid
+  #   2. If bid/ask invalid → EXCLUDE from model-vs-market analysis
+  #   3. Last price used ONLY with explicit price_source="last" flag — never silently mixed
+  exclude_on_invalid_quotes: true
+
+# ------------------------------------------------------------
+# Black-Scholes
+# ------------------------------------------------------------
+black_scholes:
+  # No special config — analytical model
+  # Greeks computed analytically (standard 5 + higher-order)
+  # Higher-order: Vanna, Volga/Vomma, Charm — analytical only
+
+# ------------------------------------------------------------
+# Binomial tree (CRR)
+# ------------------------------------------------------------
+binomial_tree:
+  default_steps: 200                 # number of time steps
+  convergence_steps: [10, 25, 50, 100, 200, 500, 1000]  # for convergence plot
+  # CRR parameterization:
+  #   u = exp(σ√dt), d = 1/u
+  #   p = (exp((r-q)dt) - d) / (u - d)
+
+# ------------------------------------------------------------
+# Monte Carlo
+# ------------------------------------------------------------
+monte_carlo:
+  paths: 100000                      # number of simulation paths
+  time_steps: 252                    # discretization (daily)
+  seed: 42                           # reproducibility
+  use_antithetic: true               # antithetic variates
+  use_control_variate: true          # control variate (BS price as control)
+  control_variate_beta_mode: "estimate"  # "fixed" or "estimate"
+  control_variate_beta_fixed: 1.0       # used only when mode = "fixed"
+  # When mode = "estimate":
+  #   β = Cov(MC_payoff, CV_payoff) / Var(CV_payoff)
+  #   estimated from all paths (not a separate pilot run — use same paths)
+  # Dashboard and docs must clearly state which mode was used for each run
+  convergence_paths: [1000, 5000, 10000, 50000, 100000]  # for convergence plot
+  # Scope: European options ONLY in v1
+  # MC is not needed for vanilla European (BS is exact) — implemented as
+  # foundation for path-dependent extensions and to demonstrate variance reduction
+
+# ------------------------------------------------------------
+# Implied volatility solver
+# ------------------------------------------------------------
+implied_vol:
+  method: "brentq"                   # scipy.optimize.brentq
+  vol_lower_bound: 0.001             # minimum σ search bound
+  vol_upper_bound: 10.0              # maximum σ search bound (1000% vol)
+  tolerance: 1.0e-8                  # solver tolerance
+  max_iterations: 100                # max solver iterations
+  # Failure policy: return np.nan — NEVER fake-fill
+  # Pre-solve validation:
+  #   - market_price > intrinsic value
+  #   - market_price < upper bound (S for calls, K*e^(-rT) for puts)
+  #   - market_price > 0
+
+# ------------------------------------------------------------
+# Volatility surface
+# ------------------------------------------------------------
+vol_surface:
+  interpolation_method: "cubic"      # scipy griddata method
+  min_points_for_surface: 20         # minimum valid IV points to build surface
+  # Type: empirical implied vol surface via interpolation/smoothing
+  # NOT arbitrage-free calibrated (no SVI, no arbitrage constraints in v1)
+  # Axes: log-moneyness ln(K/S) × time to expiry (years)
+
+# Skew metrics
+skew_metrics:
+  delta_level: 0.25                  # 25Δ for risk reversal and butterfly
+  # 25Δ RR = σ(25Δ call) − σ(25Δ put)
+  # 25Δ BF = 0.5 × [σ(25Δ call) + σ(25Δ put)] − σ(ATM)
+  # Equity convention caveat: adapted from FX vol conventions
+  # 25Δ strikes found by interpolation on the smile
+
+# ------------------------------------------------------------
+# Greeks — finite difference (Binomial & MC)
+# ------------------------------------------------------------
+greeks:
+  bump_spot_pct: 0.01               # 1% of S for delta/gamma
+  bump_vol: 0.01                    # 1 vol point for vega
+  bump_rate: 0.01                   # 1% for rho
+  bump_time_days: 1                 # 1 calendar day for theta (÷365)
+  # Method: central difference (V(x+h) - V(x-h)) / (2h)
+  #
+  # Units (LOCKED):
+  #   Delta:  per $1 spot move
+  #   Gamma:  per $1 spot move
+  #   Theta:  per calendar day (annualized derivative ÷ 365)
+  #   Vega:   per +1 vol point (+1%, i.e. +0.01 in σ)
+  #   Rho:    per +1% rate move (+0.01 in r)
+  #
+  # Higher-order (BS analytical ONLY — not forced through binomial/MC):
+  #   Vanna:  per +1 vol point per $1 spot
+  #   Volga:  per +1 vol point
+  #   Charm:  per calendar day per $1 spot
+
+# ------------------------------------------------------------
+# Model vs Market comparison
+# ------------------------------------------------------------
+model_comparison:
+  moneyness_buckets: [-0.3, -0.15, -0.05, 0.05, 0.15, 0.3]  # log-moneyness bucket edges
+  maturity_buckets: [7, 30, 60, 90, 180, 365]                 # DTE bucket edges (days)
+
+# Put-call parity
+parity_check:
+  max_parity_deviation_pct: 0.02     # flag if |deviation| > 2% of mid price
+  # EUROPEAN OPTIONS ONLY — do NOT validate on American chains
+  # Parity: C - P = S × e^(-qT) - K × e^(-rT)
+
+# ------------------------------------------------------------
+# Scenario analysis
+# ------------------------------------------------------------
+scenarios:
+  # Heatmap grid
+  spot_range_pct: [-0.20, -0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15, 0.20]
+  vol_range_pts: [-0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15]  # vol point changes
+  time_forward_days: [0, 7, 14, 30]   # days forward for time decay slider
+
+  # Presets (mechanical — no fake macro storytelling)
+  presets:
+    earnings:
+      description: "Pre/post earnings vol dynamics"
+      spot_changes: [-0.10, -0.05, 0.0, 0.05, 0.10]
+      vol_change_pre: 0.10             # +10 vol points before event
+      vol_change_post: -0.15           # −15 vol points post-event (crush)
+      rate_change: 0.0
+
+    vol_crush:
+      description: "Post-event vol compression"
+      spot_changes: [0.0]
+      vol_changes: [-0.10, -0.20]      # −10 to −20 vol points
+      rate_change: 0.0
+
+    rate_hike:
+      description: "Rate move impact (small but included for completeness)"
+      spot_changes: [0.0]
+      vol_change: 0.0
+      rate_changes: [0.0025, 0.005]    # +25 bps, +50 bps
+
+# ------------------------------------------------------------
+# Delta hedging simulation
+# ------------------------------------------------------------
+delta_hedge:
+  hedge_frequency: "daily"           # "daily", "weekly", or integer (every N days)
+  tc_bps: 5.0                       # transaction cost in basis points
+  slippage_bps: 2.0                 # slippage in basis points
+  default_position: "long_call"      # "long_call", "long_put", "short_call", "short_put"
+  num_contracts: 1                   # number of option contracts (each = 100 shares)
+  contract_multiplier: 100           # shares per contract (US standard)
+  use_realized_path: true            # use yfinance historical path when available
+  simulated_paths: 100               # number of GBM paths for simulated comparison
+  # Self-financing replication portfolio:
+  #   1. Option position
+  #   2. Stock hedge (delta shares)
+  #   3. Cash account accruing at r
+  #   4. Transaction costs + slippage
+  #
+  # P&L decomposition:
+  #   Total = Gamma/Theta effect + Hedging error + Transaction costs
+  #   Gamma/Theta = ½ × Gamma × (ΔS)² − Theta × Δt
+  #   Hedging error = residual (discrete vs continuous gap)
+  #   TC = turnover × (tc_bps + slippage_bps) / 10000
+  #
+  # FRAMING: This is illustration of discrete hedging replication — NOT a profitable strategy.
+
+# ------------------------------------------------------------
+# Dashboard
+# ------------------------------------------------------------
+dashboard:
+  tabs:
+    - "Chain Explorer"               # entry point — load chain, filter, browse
+    - "Pricing"                      # single-option pricer + model comparison + convergence
+    - "Greeks"                       # Greeks table + profiles + interpretation
+    - "Vol Surface"                  # 3D surface + smile + term structure + skew metrics
+    - "Model vs Market"              # price comparison + parity check + error breakdown
+    - "Scenarios"                    # P&L heatmap + presets
+    - "Delta Hedge"                  # hedging sim + P&L decomposition
+  theme: "bloomberg_dark"
+
+# ============================================================
+# End of config
+# ============================================================
