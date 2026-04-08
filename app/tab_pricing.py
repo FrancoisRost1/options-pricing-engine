@@ -42,9 +42,33 @@ def render(state, config):
         "Deviations > $0.05 suggest insufficient tree steps or MC paths."
     )
 
-    st.markdown(f"MC 95% CI: [${comp['mc_ci_lower']:.4f}, ${comp['mc_ci_upper']:.4f}] "
-                f"| SE: ${comp['mc_std_error']:.4f} "
-                f"| CV beta: {comp.get('mc_cv_beta', '—')}")
+    # Show both standard and CV-adjusted MC CIs
+    from src import monte_carlo
+    mc_cfg = config.get("monte_carlo", {})
+    mc_raw = monte_carlo.price(
+        S, K, T, r_input, sigma, q, opt_type,
+        n_paths=mc_cfg.get("paths", 100000),
+        n_steps=mc_cfg.get("time_steps", 252),
+        seed=mc_cfg.get("seed", 42),
+        use_antithetic=False, use_control_variate=False,
+    )
+    ci_raw = mc_raw["ci_upper"] - mc_raw["ci_lower"]
+    ci_cv = comp["mc_ci_upper"] - comp["mc_ci_lower"]
+
+    st.markdown(
+        f"**Standard MC:** CI [{mc_raw['ci_lower']:.4f}, {mc_raw['ci_upper']:.4f}] "
+        f"width ${ci_raw:.4f} | SE ${mc_raw['std_error']:.4f}  \n"
+        f"**With CV + antithetic:** CI [{comp['mc_ci_lower']:.4f}, {comp['mc_ci_upper']:.4f}] "
+        f"width ${ci_cv:.4f} | SE ${comp['mc_std_error']:.4f} "
+        f"| CV beta: {comp.get('mc_cv_beta', '—')}"
+    )
+    if ci_raw > 0:
+        styled_card(
+            f"Variance reduction shrinks the CI by "
+            f"{(1 - ci_cv / ci_raw) * 100:.0f}%. "
+            f"Control variate uses the BS analytical price as a benchmark "
+            f"to cancel estimation noise."
+        )
 
     # ── Convergence charts ───────────────────────────────────
     left, right = st.columns(2)
@@ -62,7 +86,7 @@ def render(state, config):
                          annotation_text="BS price", line_color="#EF4444")
         fig_bt.update_layout(
             title="Binomial Price vs Tree Steps",
-            xaxis_title="Number of steps",
+            xaxis_title="Number of tree steps (N)",
             yaxis_title="Option price ($)",
         )
         apply_plotly_theme(fig_bt)
@@ -95,7 +119,7 @@ def render(state, config):
                          annotation_text="BS price", line_color="#EF4444")
         fig_mc.update_layout(
             title="MC Price vs Number of Paths",
-            xaxis_title="Paths", yaxis_title="Option price ($)",
+            xaxis_title="Number of simulation paths", yaxis_title="Option price ($)",
         )
         apply_plotly_theme(fig_mc)
         st.plotly_chart(fig_mc, use_container_width=True)

@@ -39,7 +39,8 @@ def build_surface(chain_df: pd.DataFrame, config: dict) -> dict:
     min_pts = vs_cfg.get("min_points_for_surface", 20)
 
     df = chain_df.dropna(subset=["iv", "log_moneyness", "T"]).copy()
-    df = df[df["iv"] > 0]
+    # Post-IV bounds: drop solver artifacts outside [1%, 300%]
+    df = df[(df["iv"] >= 0.01) & (df["iv"] <= 3.0)]
 
     if len(df) < min_pts:
         return None
@@ -89,7 +90,7 @@ def smile_per_expiry(chain_df: pd.DataFrame) -> dict:
     plots — the classic way to visualize skew.
     """
     df = chain_df.dropna(subset=["iv", "log_moneyness"]).copy()
-    df = df[df["iv"] > 0]
+    df = df[(df["iv"] >= 0.01) & (df["iv"] <= 3.0)]
 
     smiles = {}
     for exp, group in df.groupby("expiry"):
@@ -113,7 +114,7 @@ def term_structure(chain_df: pd.DataFrame, spot: float) -> pd.DataFrame:
     over longer horizons) and inverted around events.
     """
     df = chain_df.dropna(subset=["iv"]).copy()
-    df = df[df["iv"] > 0]
+    df = df[(df["iv"] >= 0.01) & (df["iv"] <= 3.0)]
 
     if df.empty:
         return pd.DataFrame(columns=["expiry", "T", "dte", "atm_iv"])

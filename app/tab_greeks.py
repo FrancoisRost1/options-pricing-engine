@@ -67,7 +67,7 @@ def render(state, config):
         fig_d.add_vline(x=K, line_dash="dash", line_color="#EF4444",
                         annotation_text="Strike")
         fig_d.update_layout(title="Delta vs Spot",
-                            xaxis_title="Spot ($)", yaxis_title="Delta")
+                            xaxis_title="Spot Price ($)", yaxis_title="Delta (per $1 spot)")
         apply_plotly_theme(fig_d)
         st.plotly_chart(fig_d, use_container_width=True)
         styled_card(
@@ -81,7 +81,7 @@ def render(state, config):
         fig_g.add_vline(x=K, line_dash="dash", line_color="#EF4444",
                         annotation_text="Strike")
         fig_g.update_layout(title="Gamma vs Spot",
-                            xaxis_title="Spot ($)", yaxis_title="Gamma")
+                            xaxis_title="Spot Price ($)", yaxis_title="Gamma (per $1 spot)")
         apply_plotly_theme(fig_g)
         st.plotly_chart(fig_g, use_container_width=True)
         styled_card(
@@ -97,7 +97,7 @@ def render(state, config):
         fig_t.add_vline(x=K, line_dash="dash", line_color="#EF4444",
                         annotation_text="Strike")
         fig_t.update_layout(title="Theta vs Spot (per calendar day)",
-                            xaxis_title="Spot ($)", yaxis_title="Theta ($/day)")
+                            xaxis_title="Spot Price ($)", yaxis_title="Theta ($ per calendar day)")
         apply_plotly_theme(fig_t)
         st.plotly_chart(fig_t, use_container_width=True)
         styled_card(
@@ -110,8 +110,8 @@ def render(state, config):
         fig_v.add_trace(go.Scatter(x=spots, y=vega_vals, name="Vega"))
         fig_v.add_vline(x=K, line_dash="dash", line_color="#EF4444",
                         annotation_text="Strike")
-        fig_v.update_layout(title="Vega vs Spot (per vol point)",
-                            xaxis_title="Spot ($)", yaxis_title="Vega ($/pt)")
+        fig_v.update_layout(title="Vega vs Spot (per +1pp annualized vol)",
+                            xaxis_title="Spot Price ($)", yaxis_title="Vega ($ per +0.01 annualized sigma)")
         apply_plotly_theme(fig_v)
         st.plotly_chart(fig_v, use_container_width=True)
         styled_card(

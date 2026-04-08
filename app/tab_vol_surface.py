@@ -44,8 +44,8 @@ def render(state, config):
             title="IV Surface: Log-Moneyness x Expiry x Implied Vol",
             scene=dict(
                 xaxis_title="Log-Moneyness ln(K/S)",
-                yaxis_title="Time to Expiry (years)",
-                zaxis_title="Implied Volatility",
+                yaxis_title="Time to Expiry T (years)",
+                zaxis_title="Implied Vol sigma (annualized)",
             ),
             height=550,
         )
@@ -78,7 +78,7 @@ def render(state, config):
             fig_smile.update_layout(
                 title="IV Smile per Expiry",
                 xaxis_title="Log-Moneyness ln(K/S)",
-                yaxis_title="Implied Volatility",
+                yaxis_title="Implied Vol sigma (annualized)",
             )
             apply_plotly_theme(fig_smile)
             st.plotly_chart(fig_smile, use_container_width=True)
@@ -99,8 +99,8 @@ def render(state, config):
             ))
             fig_ts.update_layout(
                 title="ATM Implied Vol vs Time to Expiry",
-                xaxis_title="Time to Expiry (years)",
-                yaxis_title="ATM Implied Vol",
+                xaxis_title="Time to Expiry T (years)",
+                yaxis_title="ATM Implied Vol sigma (annualized)",
             )
             apply_plotly_theme(fig_ts)
             st.plotly_chart(fig_ts, use_container_width=True)

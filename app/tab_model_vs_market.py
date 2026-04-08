@@ -1,6 +1,10 @@
 """
 Tab 5: Model vs Market — price comparison scatter, error breakdown
 by moneyness x maturity, and put-call parity validation.
+
+Two modes:
+  A) Calibration check — reprice with each contract's own IV (circular, should be ~0)
+  B) Flat vol test — price all contracts with ATM vol per expiry (meaningful test)
 """
 
 import streamlit as st
@@ -9,6 +13,17 @@ import pandas as pd
 import plotly.graph_objects as go
 from src import black_scholes as bs, parity_check
 from app.style_inject import styled_card, apply_plotly_theme
+
+
+def _compute_atm_vol_per_expiry(df, S):
+    """Get ATM IV for each expiry to use as flat vol."""
+    atm_vols = {}
+    for exp, group in df.groupby("expiry"):
+        group = group.copy()
+        group["dist"] = np.abs(group["strike"] - S)
+        atm_row = group.loc[group["dist"].idxmin()]
+        atm_vols[exp] = atm_row["iv"]
+    return atm_vols
 
 
 def render(state, config):
@@ -29,10 +44,28 @@ def render(state, config):
         st.warning("No valid IVs to compare.")
         return
 
+    # ── Mode selector ────────────────────────────────────────
+    mode = st.radio(
+        "Pricing mode",
+        ["Flat Vol (meaningful test)", "Own IV (calibration check)"],
+        horizontal=True,
+        help="Flat Vol prices every contract with ATM vol for its expiry. "
+             "Own IV reprices with each contract's extracted IV (circular — error should be ~0).",
+    )
+
+    use_flat = mode.startswith("Flat")
+
+    if use_flat:
+        atm_vols = _compute_atm_vol_per_expiry(valid, S)
+        valid["pricing_vol"] = valid["expiry"].map(atm_vols)
+        valid = valid.dropna(subset=["pricing_vol"])
+    else:
+        valid["pricing_vol"] = valid["iv"]
+
     # ── Compute BS model prices ──────────────────────────────
     valid["bs_price"] = valid.apply(
-        lambda row: bs.price(S, row["strike"], row["T"], r, row["iv"], q,
-                             row["option_type"]),
+        lambda row: bs.price(S, row["strike"], row["T"], r,
+                             row["pricing_vol"], q, row["option_type"]),
         axis=1,
     )
     valid["error"] = valid["bs_price"] - valid["mid"]
@@ -43,7 +76,8 @@ def render(state, config):
         return
 
     # ── Error stats ──────────────────────────────────────────
-    st.markdown("### Price Comparison: BS Model vs Market Mid")
+    label = "Flat ATM Vol" if use_flat else "Own IV (calibration)"
+    st.markdown(f"### Price Comparison: BS ({label}) vs Market Mid")
     rmse = np.sqrt((valid["error"] ** 2).mean())
     mae = valid["error"].abs().mean()
     mean_err = valid["error"].mean()
@@ -54,6 +88,19 @@ def render(state, config):
     e2.metric("MAE", f"${mae:.4f}")
     e3.metric("Mean Error", f"${mean_err:.4f}")
     e4.metric("Max |Error|", f"${max_err:.4f}")
+
+    if use_flat:
+        styled_card(
+            "Flat vol test: prices every contract with the ATM implied vol for "
+            "its expiry. Errors show how much the smile/skew matters — wings "
+            "deviate because flat vol ignores moneyness-dependent pricing."
+        )
+    else:
+        styled_card(
+            "Calibration check: reprices each contract with its own extracted IV. "
+            "Errors should be near zero — any deviation is numerical noise from "
+            "the IV solver or mid-price rounding."
+        )
 
     # ── Scatter plot ─────────────────────────────────────────
     left, right = st.columns(2)
@@ -72,24 +119,22 @@ def render(state, config):
             line=dict(dash="dash", color="#475569"), name="45-degree",
         ))
         fig.update_layout(
-            title="BS Model Price vs Market Mid Price",
+            title=f"BS Price ({label}) vs Market Mid",
             xaxis_title="Market Mid ($)", yaxis_title="BS Price ($)",
         )
         apply_plotly_theme(fig)
         st.plotly_chart(fig, use_container_width=True)
-        styled_card(
-            "Points on the 45-degree line = perfect agreement. "
-            "Deviations reflect model assumptions (flat vol, no skew in pricing)."
-        )
 
     # ── Error by moneyness bucket ────────────────────────────
     with right:
         bins = config.get("model_comparison", {}).get(
             "moneyness_buckets", [-0.3, -0.15, -0.05, 0.05, 0.15, 0.3]
         )
-        valid["m_bucket"] = pd.cut(valid["log_moneyness"], bins=[-np.inf] + bins + [np.inf])
-        bucket_err = valid.groupby("m_bucket", observed=True)["error"].agg(["mean", "std", "count"])
-        bucket_err = bucket_err.reset_index()
+        valid["m_bucket"] = pd.cut(valid["log_moneyness"],
+                                    bins=[-np.inf] + bins + [np.inf])
+        bucket_err = valid.groupby("m_bucket", observed=True)["error"].agg(
+            ["mean", "std", "count"]
+        ).reset_index()
         bucket_err["m_bucket"] = bucket_err["m_bucket"].astype(str)
 
         fig_err = go.Figure()
@@ -99,19 +144,23 @@ def render(state, config):
             name="Mean Error",
         ))
         fig_err.update_layout(
-            title="Mean Error by Moneyness Bucket",
-            xaxis_title="Log-Moneyness Bucket",
+            title="Mean Error by Log-Moneyness Bucket",
+            xaxis_title="Log-Moneyness ln(K/S)",
             yaxis_title="Error ($)",
         )
         apply_plotly_theme(fig_err)
         st.plotly_chart(fig_err, use_container_width=True)
         styled_card(
-            "Error by moneyness shows where the model deviates most. "
-            "Wings often show larger errors due to skew not captured by flat-vol pricing."
+            "Wings show larger errors in flat-vol mode because the smile "
+            "prices OTM puts richer (crash protection) than flat vol predicts."
         )
 
     # ── Put-call parity ──────────────────────────────────────
     st.markdown("### Put-Call Parity Validation (European Only)")
+    styled_card(
+        "US equity options are American-style. Parity deviations include "
+        "early exercise premium — not true arbitrage. Treat as indicative."
+    )
     parity_df = parity_check.check_parity(chain_iv, S, r, q, config)
 
     if parity_df.empty:
@@ -125,16 +174,13 @@ def render(state, config):
     p3.metric("Violation %", f"{summary['violation_pct']:.1f}%")
     p4.metric("Max Dev %", f"{summary['max_deviation_pct']:.2f}%")
 
-    styled_card(
-        "Put-call parity must hold for European options: C - P = Se^(-qT) - Ke^(-rT). "
-        "Violations above threshold signal stale quotes or data quality issues."
-    )
-
     violations = parity_df[parity_df["violation"]]
     if not violations.empty:
         st.markdown(f"**{len(violations)} violation(s) detected:**")
         disp = violations[["strike", "expiry", "call_mid", "put_mid",
                            "deviation_dollar", "deviation_pct"]].copy()
-        disp["deviation_dollar"] = disp["deviation_dollar"].apply(lambda x: f"${x:.4f}")
-        disp["deviation_pct"] = disp["deviation_pct"].apply(lambda x: f"{x:.2%}")
+        disp["deviation_dollar"] = disp["deviation_dollar"].apply(
+            lambda x: f"${x:.4f}")
+        disp["deviation_pct"] = disp["deviation_pct"].apply(
+            lambda x: f"{x:.2%}")
         st.dataframe(disp, use_container_width=True)

@@ -118,7 +118,7 @@ def render(state, config):
                            annotation_text="Strike")
         fig_spot.update_layout(
             title="Simulated Spot Path (GBM)",
-            xaxis_title="Trading Day", yaxis_title="Spot ($)",
+            xaxis_title="Trading Day (t)", yaxis_title="Spot Price ($)",
         )
         apply_plotly_theme(fig_spot)
         st.plotly_chart(fig_spot, use_container_width=True)
@@ -134,7 +134,7 @@ def render(state, config):
         ))
         fig_delta.update_layout(
             title="Option Delta Over Time",
-            xaxis_title="Trading Day", yaxis_title="Delta",
+            xaxis_title="Trading Day (t)", yaxis_title="Delta (per $1 spot)",
         )
         apply_plotly_theme(fig_delta)
         st.plotly_chart(fig_delta, use_container_width=True)

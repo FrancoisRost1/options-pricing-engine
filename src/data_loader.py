@@ -90,14 +90,29 @@ def fetch_dividend_yield(ticker: str, spot: float, config: dict) -> float:
     try:
         tk = yf.Ticker(ticker)
         info = tk.info
-        # Try multiple fields yfinance might return
-        div_rate = info.get("dividendYield") or info.get("trailingAnnualDividendYield")
-        if div_rate and div_rate > 0:
-            return float(div_rate)
-        # Fall back to computing from trailing dividend
+
+        # Priority 1: trailingAnnualDividendRate / spot (most reliable)
         annual_div = info.get("trailingAnnualDividendRate", 0)
         if annual_div and annual_div > 0 and spot > 0:
-            return float(annual_div / spot)
+            q = float(annual_div / spot)
+            if q > 0.15:
+                import warnings
+                warnings.warn(
+                    f"Dividend yield {q:.2%} from trailingAnnualDividendRate "
+                    f"looks high — using fallback {fallback:.2%}",
+                    stacklevel=2,
+                )
+                return fallback
+            return q
+
+        # Priority 2: trailingAnnualDividendYield (already decimal)
+        trailing_yield = info.get("trailingAnnualDividendYield")
+        if trailing_yield and 0 < trailing_yield < 0.15:
+            return float(trailing_yield)
+
+        # SKIP dividendYield — yfinance returns it inconsistently
+        # (sometimes percentage form e.g. 0.41 meaning 41%, sometimes
+        # decimal 0.0041). Too unreliable to use without validation.
     except Exception:
         pass
 

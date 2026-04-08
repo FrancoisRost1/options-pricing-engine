@@ -81,10 +81,26 @@ def main():
         load_btn = st.button("Load Data", type="primary", use_container_width=True)
 
         st.markdown("---")
+        st.markdown("### Model Limitations")
         st.markdown(
-            "<small style='color:#475569;'>Data: yfinance (live) or synthetic.<br>"
-            "Assumptions: flat yield curve, continuous dividend yield, "
-            "log-normal returns (GBM).</small>",
+            "<div style='background:#1A2236; border:1px solid rgba(148,163,184,0.12); "
+            "border-radius:10px; padding:12px; font-size:0.8rem; color:#94A3B8; "
+            "line-height:1.6;'>"
+            "<b style='color:#F59E0B;'>Know your assumptions:</b><br>"
+            "- BS assumes constant vol (no smile)<br>"
+            "- No jumps, no stochastic vol<br>"
+            "- Continuous dividend yield (not discrete)<br>"
+            "- Flat yield curve (short/long bucket only)<br>"
+            "- Vol surface is empirical, not arbitrage-free<br>"
+            "- US equity options are American-style;<br>"
+            "&nbsp;&nbsp;MC and parity check assume European<br>"
+            "- GBM has no fat tails"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("")
+        st.markdown(
+            "<small style='color:#475569;'>Data: yfinance (live) or synthetic.</small>",
             unsafe_allow_html=True,
         )
 
