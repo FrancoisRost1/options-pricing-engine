@@ -50,7 +50,7 @@ def render(state, config):
         ["Flat Vol (meaningful test)", "Own IV (calibration check)"],
         horizontal=True,
         help="Flat Vol prices every contract with ATM vol for its expiry. "
-             "Own IV reprices with each contract's extracted IV (circular — error should be ~0).",
+             "Own IV reprices with each contract's extracted IV (circular: error should be ~0).",
     )
 
     use_flat = mode.startswith("Flat")
@@ -92,13 +92,13 @@ def render(state, config):
     if use_flat:
         styled_card(
             "Flat vol test: prices every contract with the ATM implied vol for "
-            "its expiry. Errors show how much the smile/skew matters — wings "
+            "its expiry. Errors show how much the smile/skew matters: wings "
             "deviate because flat vol ignores moneyness-dependent pricing."
         )
     else:
         styled_card(
             "Calibration check: reprices each contract with its own extracted IV. "
-            "Errors should be near zero — any deviation is numerical noise from "
+            "Errors should be near zero: any deviation is numerical noise from "
             "the IV solver or mid-price rounding."
         )
 
@@ -159,7 +159,7 @@ def render(state, config):
     st.markdown("### Put-Call Parity Validation (European Only)")
     styled_card(
         "US equity options are American-style. Parity deviations include "
-        "early exercise premium — not true arbitrage. Treat as indicative."
+        "early exercise premium: not true arbitrage. Treat as indicative."
     )
     styled_card(
         "High violation rates are expected. Sources of deviation: "

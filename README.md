@@ -9,14 +9,14 @@ Options pricing and Greeks calculator with Black-Scholes, CRR binomial tree, and
 ## Features
 
 ### Three Pricing Models
-- **Black-Scholes** — analytical closed-form for European calls and puts, 8 analytical Greeks (Delta, Gamma, Theta, Vega, Rho + Vanna, Volga, Charm)
-- **CRR Binomial Tree** — European and American options, early exercise via backward induction, convergence analysis vs BS
-- **Monte Carlo (GBM)** — European options with antithetic variates and control variate variance reduction, configurable beta estimation
+- **Black-Scholes**, analytical closed-form for European calls and puts, 8 analytical Greeks (Delta, Gamma, Theta, Vega, Rho + Vanna, Volga, Charm)
+- **CRR Binomial Tree**, European and American options, early exercise via backward induction, convergence analysis vs BS
+- **Monte Carlo (GBM)**, European options with antithetic variates and control variate variance reduction, configurable beta estimation
 
 ### Implied Volatility
 - Brent's root-finding with pre-solve arbitrage bound validation
 - Batch extraction across full options chains
-- Failure policy: `np.nan` — never fake-filled
+- Failure policy: `np.nan`, never fake-filled
 
 ### Volatility Surface
 - Empirical IV surface via cubic interpolation (log-moneyness x expiry)
@@ -41,19 +41,19 @@ Options pricing and Greeks calculator with Black-Scholes, CRR binomial tree, and
 
 ### Dashboard
 7-tab Streamlit app with Bloomberg dark mode theme:
-1. **Chain Explorer** — browse raw/filtered options chain
-2. **Pricing** — single-option pricer, cross-model comparison, convergence charts
-3. **Greeks** — all 8 Greeks with profiles vs spot
-4. **Vol Surface** — 3D surface, smile overlay, term structure, skew metrics
-5. **Model vs Market** — price scatter, error breakdown, parity check
-6. **Scenarios** — P&L heatmap with presets
-7. **Delta Hedge** — hedging simulation with P&L decomposition
+1. **Chain Explorer**, browse raw/filtered options chain
+2. **Pricing**, single-option pricer, cross-model comparison, convergence charts
+3. **Greeks**, all 8 Greeks with profiles vs spot
+4. **Vol Surface**, 3D surface, smile overlay, term structure, skew metrics
+5. **Model vs Market**, price scatter, error breakdown, parity check
+6. **Scenarios**, P&L heatmap with presets
+7. **Delta Hedge**, hedging simulation with P&L decomposition
 
 ---
 
 ## Screenshot
 
-> *Screenshot placeholder — add after first deployment*
+> *Screenshot placeholder, add after first deployment*
 
 ---
 
@@ -152,8 +152,8 @@ python3 -m pytest tests/ -v
 ## Key Results
 
 - **3 models agree** within $0.002 on ATM European options (BS, Binomial 200 steps, MC 100k paths)
-- **230 tests passing** — textbook values (Hull), edge cases, integration pipeline
-- **Codex-audited** (GPT-5.4, HIGH reasoning) — 7 bugs fixed including financing carry in delta hedge, charm sign convention, IV upper bound with dividends
+- **230 tests passing**, textbook values (Hull), edge cases, integration pipeline
+- **Codex-audited** (GPT-5.4, HIGH reasoning), 7 bugs fixed including financing carry in delta hedge, charm sign convention, IV upper bound with dividends
 - **650+ valid IVs** extracted from live AAPL chain (809 filtered contracts)
 - **7-tab Bloomberg dark mode dashboard** with interpretation callouts on every chart
 
@@ -161,7 +161,7 @@ python3 -m pytest tests/ -v
 
 1. Flat yield curve (short/long rate by DTE bucket, not full term structure)
 2. Continuous dividend yield (constant over option life)
-3. Log-normal returns (GBM — no jumps, no stochastic vol)
+3. Log-normal returns (GBM, no jumps, no stochastic vol)
 4. No transaction costs in pricing (costs only in delta hedging simulation)
 5. European exercise for MC (no Longstaff-Schwartz in v1)
 6. Empirical vol surface (interpolation only, not arbitrage-free calibrated)

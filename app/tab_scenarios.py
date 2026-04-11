@@ -72,7 +72,7 @@ def render(state, config):
     # ── Presets ───────────────────────────────────────────────
     st.markdown("### Scenario Presets")
     styled_card(
-        "Presets are mechanical bump combinations — the labels describe typical "
+        "Presets are mechanical bump combinations: the labels describe typical "
         "events but are not predictions. Values from config.yaml."
     )
 
@@ -81,9 +81,9 @@ def render(state, config):
     exposure_notes = {
         "earnings": "Long call = long vega. Pre-earnings vol expansion benefits "
                     "the position; post-earnings vol crush destroys it.",
-        "vol_crush": "Pure vega exposure — shows cost of holding options through "
+        "vol_crush": "Pure vega exposure: shows cost of holding options through "
                      "vol compression.",
-        "rate_hike": "Rho exposure is small for equity options — included for "
+        "rate_hike": "Rho exposure is small for equity options: included for "
                      "completeness.",
     }
 
@@ -106,9 +106,9 @@ def render(state, config):
                     "Scenario": row["scenario"],
                     "Spot": f"{row['spot_change']:+.0%}",
                     "Vol": f"{row['vol_change']:+.0%}",
-                    "Rate": f"{row['rate_change']:+.2%}" if row["rate_change"] else "—",
-                    "New Price": f"${row['new_price']:.4f}" if not np.isnan(row["new_price"]) else "—",
-                    "P&L": f"${row['pnl']:+.4f}" if not np.isnan(row["pnl"]) else "—",
+                    "Rate": f"{row['rate_change']:+.2%}" if row["rate_change"] else "",
+                    "New Price": f"${row['new_price']:.4f}" if not np.isnan(row["new_price"]) else "",
+                    "P&L": f"${row['pnl']:+.4f}" if not np.isnan(row["pnl"]) else "",
                 } for row in results],
                 use_container_width=True,
             )

@@ -46,11 +46,11 @@ def render(state, config):
 
     styled_card(
         "Standard Greeks (top) from all 3 models. Higher-order Greeks "
-        "(bottom) are BS analytical only — FD on trees amplifies noise."
+        "(bottom) are BS analytical only: FD on trees amplifies noise."
     )
     styled_card(
         "Higher-order Greeks (Vanna, Volga, Charm) are model-dependent and "
-        "numerically sensitive. Values shown are BS analytical — actual market "
+        "numerically sensitive. Values shown are BS analytical: actual market "
         "Greeks differ under stochastic vol."
     )
 
@@ -77,7 +77,7 @@ def render(state, config):
         st.plotly_chart(fig_d, use_container_width=True)
         styled_card(
             "Delta measures directional exposure. It transitions from "
-            "0 (OTM) to 1 (ITM) around the strike — steeper near ATM."
+            "0 (OTM) to 1 (ITM) around the strike: steeper near ATM."
         )
 
     with right:
@@ -90,7 +90,7 @@ def render(state, config):
         apply_plotly_theme(fig_g)
         st.plotly_chart(fig_g, use_container_width=True)
         styled_card(
-            "Gamma peaks near ATM — short-dated ATM options are hardest "
+            "Gamma peaks near ATM: short-dated ATM options are hardest "
             "to delta-hedge because their delta changes fastest."
         )
 
@@ -107,7 +107,7 @@ def render(state, config):
         st.plotly_chart(fig_t, use_container_width=True)
         styled_card(
             "Theta is the daily cost of holding an option. Most negative "
-            "near ATM — the price you pay for gamma exposure."
+            "near ATM: the price you pay for gamma exposure."
         )
 
     with right2:

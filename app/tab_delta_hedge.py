@@ -20,7 +20,7 @@ def render(state, config):
     q = market["dividend_yield"]
 
     styled_card(
-        "This illustrates discrete hedging replication — not a trading strategy. "
+        "This illustrates discrete hedging replication: not a trading strategy. "
         "It shows the gap between theoretical continuous hedging and real-world "
         "discrete rebalancing, including transaction cost drag."
     )
@@ -83,7 +83,7 @@ def render(state, config):
         f"**Spread:** {(realized_vol - sigma):+.1%}"
     )
     styled_card(
-        "P&L is negative when realized vol < implied vol — theta decay "
+        "P&L is negative when realized vol < implied vol: theta decay "
         "exceeds gamma gains. This is the fundamental driver of hedging P&L."
     )
 
@@ -162,6 +162,6 @@ def render(state, config):
     st.metric("Rebalances", summary["n_rebalances"])
     styled_card(
         "Hedging error is the residual from discrete vs continuous rebalancing. "
-        "More frequent rebalancing reduces error but increases TC drag — "
+        "More frequent rebalancing reduces error but increases TC drag: "
         "this is the fundamental tradeoff in delta hedging."
     )

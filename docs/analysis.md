@@ -2,19 +2,19 @@
 
 ## Investment Thesis
 
-This project is not about generating alpha from options trading. It is about **understanding the instrument** — how options are priced, how Greeks drive risk exposure, and how hedging works in practice versus theory.
+This project is not about generating alpha from options trading. It is about **understanding the instrument**, how options are priced, how Greeks drive risk exposure, and how hedging works in practice versus theory.
 
-The thesis is that a practitioner who can build an options pricing engine from scratch — implementing Black-Scholes, binomial trees, Monte Carlo simulation, implied volatility extraction, and delta hedging with P&L decomposition — demonstrates a depth of understanding that is qualitatively different from someone who can only use Bloomberg's OVME screen or plug numbers into a formula sheet.
+The thesis is that a practitioner who can build an options pricing engine from scratch, implementing Black-Scholes, binomial trees, Monte Carlo simulation, implied volatility extraction, and delta hedging with P&L decomposition, demonstrates a depth of understanding that is qualitatively different from someone who can only use Bloomberg's OVME screen or plug numbers into a formula sheet.
 
 ### Why This Matters for PE/HF
 
-1. **Structured products due diligence** — PE firms increasingly encounter embedded options in deal structures (earn-outs, management equity with hurdles, convertible instruments). Pricing these correctly requires understanding the machinery, not just the output.
+1. **Structured products due diligence**, PE firms increasingly encounter embedded options in deal structures (earn-outs, management equity with hurdles, convertible instruments). Pricing these correctly requires understanding the machinery, not just the output.
 
-2. **Risk management** — Hedge funds with equity exposure need to understand how their options overlays (protective puts, covered calls, collar strategies) behave under different scenarios. The scenario analysis and delta hedging modules directly address this.
+2. **Risk management**, Hedge funds with equity exposure need to understand how their options overlays (protective puts, covered calls, collar strategies) behave under different scenarios. The scenario analysis and delta hedging modules directly address this.
 
-3. **Volatility as an asset class** — Vol trading desks think in terms of implied vs realized vol, skew dynamics, and term structure. The vol surface module and skew metrics (25-delta RR, butterfly) speak directly to this language.
+3. **Volatility as an asset class**, Vol trading desks think in terms of implied vs realized vol, skew dynamics, and term structure. The vol surface module and skew metrics (25-delta RR, butterfly) speak directly to this language.
 
-4. **Interview signal** — Being able to explain put-call parity, why American calls on non-dividend stocks are never exercised early, how gamma and theta are two sides of the same coin, and why delta hedging is not a free lunch — these are the questions that separate candidates.
+4. **Interview signal**, Being able to explain put-call parity, why American calls on non-dividend stocks are never exercised early, how gamma and theta are two sides of the same coin, and why delta hedging is not a free lunch, these are the questions that separate candidates.
 
 ---
 
@@ -42,7 +42,7 @@ The thesis is that a practitioner who can build an options pricing engine from s
 | Log-normal returns (GBM) | Standard for vanilla options pricing; analytically tractable | No jumps, no stochastic vol, no fat tails |
 | Continuous dividend yield | Simplifies BS formula; reasonable for diversified indices | Inaccurate for single stocks near ex-dates |
 | Flat yield curve | Two-bucket (short/long) approximation matches most use cases | Misprices in steep curve environments |
-| No transaction costs in pricing | Industry standard — costs are a hedging concern, not a pricing concern | Delta hedge module adds costs back explicitly |
+| No transaction costs in pricing | Industry standard, costs are a hedging concern, not a pricing concern | Delta hedge module adds costs back explicitly |
 | European MC only | Longstaff-Schwartz adds complexity without changing vanilla pricing | Cannot price American options via MC in v1 |
 | Empirical vol surface | Shows actual market skew without imposing parametric form | Not arbitrage-free; extrapolation unreliable |
 
@@ -95,12 +95,12 @@ These are not trading recommendations. They illustrate how the engine's analytic
 | Small move, vol crushes | +/-2% | -20pts | Negative (vol crush > gamma) |
 | No move, vol crushes | 0% | -25pts | Maximum loss (double theta + vol crush) |
 
-**Key insight**: Buying straddles before earnings is buying gamma against selling vega. The engine's earnings preset shows the exact breakeven: how much spot must move to overcome the vol crush. This is where most retail traders get burned — they buy expensive vol without quantifying the hurdle.
+**Key insight**: Buying straddles before earnings is buying gamma against selling vega. The engine's earnings preset shows the exact breakeven: how much spot must move to overcome the vol crush. This is where most retail traders get burned, they buy expensive vol without quantifying the hurdle.
 
 ---
 
 ## Framing
 
-This engine is a **learning and analysis tool**, not a trading system. It does not generate signals, recommend positions, or claim any edge in options markets. The value is in understanding the instrument — and that understanding is what makes a practitioner dangerous in the best sense of the word.
+This engine is a **learning and analysis tool**, not a trading system. It does not generate signals, recommend positions, or claim any edge in options markets. The value is in understanding the instrument, and that understanding is what makes a practitioner dangerous in the best sense of the word.
 
 Every simplifying assumption is documented. Every edge case returns `np.nan` rather than a misleading number. Every chart has an interpretation callout explaining the financial meaning, not just the math. This is how a quant communicates: precisely, with stated assumptions, and with explicit uncertainty bounds.

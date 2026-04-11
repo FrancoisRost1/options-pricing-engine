@@ -60,7 +60,7 @@ def render(state, config):
         f"width ${ci_raw:.4f} | SE ${mc_raw['std_error']:.4f}  \n"
         f"**With CV + antithetic:** CI [{comp['mc_ci_lower']:.4f}, {comp['mc_ci_upper']:.4f}] "
         f"width ${ci_cv:.4f} | SE ${comp['mc_std_error']:.4f} "
-        f"| CV beta: {comp.get('mc_cv_beta', '—')}"
+        f"| CV beta: {comp.get('mc_cv_beta', '')}"
     )
     if ci_raw > 0:
         styled_card(

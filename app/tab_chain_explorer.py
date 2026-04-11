@@ -84,15 +84,15 @@ def render(state, config):
     for col in ["bid", "ask", "mid", "lastPrice"]:
         if col in display.columns:
             display[col] = display[col].apply(
-                lambda x: f"${x:.2f}" if not np.isnan(x) else "—"
+                lambda x: f"${x:.2f}" if not np.isnan(x) else ""
             )
     if "iv" in display.columns:
         display["iv"] = display["iv"].apply(
-            lambda x: f"{x:.1%}" if not np.isnan(x) else "—"
+            lambda x: f"{x:.1%}" if not np.isnan(x) else ""
         )
     if "log_moneyness" in display.columns:
         display["log_moneyness"] = display["log_moneyness"].apply(
-            lambda x: f"{x:.3f}" if not np.isnan(x) else "—"
+            lambda x: f"{x:.3f}" if not np.isnan(x) else ""
         )
 
     st.dataframe(display, use_container_width=True, height=500)

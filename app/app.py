@@ -58,7 +58,7 @@ def _load_data(ticker, use_synthetic, config):
     market = _load_live_data(ticker, config)
     if market["chain"].empty:
         if config.get("data", {}).get("use_synthetic_fallback", True):
-            st.warning("yfinance returned empty chain — using synthetic data.")
+            st.warning("yfinance returned empty chain: using synthetic data.")
             return _load_synthetic(config)
         st.error("No data available.")
         return None

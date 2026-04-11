@@ -53,7 +53,7 @@ def render(state, config):
         st.plotly_chart(fig_3d, use_container_width=True)
         styled_card(
             "Empirical IV surface via cubic interpolation. NOT arbitrage-free "
-            "— shows market-observed skew and term structure."
+            " shows market-observed skew and term structure."
         )
     else:
         st.info(f"Insufficient data for surface (need "
@@ -83,7 +83,7 @@ def render(state, config):
             apply_plotly_theme(fig_smile)
             st.plotly_chart(fig_smile, use_container_width=True)
             styled_card(
-                "Equity smile slopes down-left (put skew) — deep OTM puts "
+                "Equity smile slopes down-left (put skew): deep OTM puts "
                 "trade at higher IV, reflecting crash protection demand."
             )
 
@@ -119,7 +119,7 @@ def render(state, config):
         for col in ["atm_iv", "call_25d_iv", "put_25d_iv", "risk_reversal", "butterfly"]:
             if col in display.columns:
                 display[col] = display[col].apply(
-                    lambda x: f"{x:.2%}" if not np.isnan(x) else "—"
+                    lambda x: f"{x:.2%}" if not np.isnan(x) else ""
                 )
         st.dataframe(display, use_container_width=True)
         styled_card(
