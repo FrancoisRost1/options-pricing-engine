@@ -14,8 +14,13 @@ Key conventions:
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 from datetime import datetime
+
+
+def _get_yf():
+    """Lazy-import yfinance so Cloud startup never triggers it."""
+    import yfinance as yf
+    return yf
 
 
 def fetch_spot(ticker: str) -> float:
@@ -25,6 +30,7 @@ def fetch_spot(ticker: str) -> float:
     Uses yfinance fast_info for speed. Falls back to history
     if fast_info is unavailable.
     """
+    yf = _get_yf()
     tk = yf.Ticker(ticker)
     try:
         price = tk.fast_info.get("lastPrice")
@@ -64,6 +70,7 @@ def fetch_risk_free_rate(dte: int, config: dict) -> float:
         else rf_cfg.get("long_rate_ticker", "^TNX")
 
     try:
+        yf = _get_yf()
         tk = yf.Ticker(ticker)
         hist = tk.history(period="5d")
         if hist.empty:
@@ -88,6 +95,7 @@ def fetch_dividend_yield(ticker: str, spot: float, config: dict) -> float:
     fallback = div_cfg.get("fallback_yield", 0.015)
 
     try:
+        yf = _get_yf()
         tk = yf.Ticker(ticker)
         info = tk.info
 
@@ -133,6 +141,7 @@ def fetch_options_chain(ticker: str, config: dict) -> pd.DataFrame:
       2. Otherwise → price_source = 'excluded', mid = NaN
       3. Last price never silently mixed into mid
     """
+    yf = _get_yf()
     tk = yf.Ticker(ticker)
     spot = fetch_spot(ticker)
     if np.isnan(spot):

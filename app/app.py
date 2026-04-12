@@ -11,15 +11,21 @@ scenarios, and delta hedging.
 
 import sys
 import os
+from pathlib import Path
 import streamlit as st
 import numpy as np
 
-# Ensure project root is on path for src/ and utils/ imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# CWD bootstrap — ensure project root is CWD and on sys.path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+os.chdir(PROJECT_ROOT)
 
 from app.style_inject import inject_styles, styled_header, styled_card
 from utils.config_loader import load_config
-from src import data_loader, synthetic_data, chain_filter, implied_vol
+from utils.env_detect import is_streamlit_cloud
+from src import synthetic_data, chain_filter, implied_vol
+
+IS_CLOUD = is_streamlit_cloud()
 
 from app.tab_chain_explorer import render as render_chain_explorer
 from app.tab_pricing import render as render_pricing
@@ -40,7 +46,8 @@ inject_styles()
 
 @st.cache_data(ttl=900)
 def _load_live_data(ticker, _config):
-    """Cache yfinance data for 15 minutes."""
+    """Cache yfinance data for 15 minutes. Lazy-imports data_loader."""
+    from src import data_loader
     return data_loader.load_market_data(ticker, _config)
 
 
@@ -51,11 +58,27 @@ def _load_synthetic(_config):
 
 
 def _load_data(ticker, use_synthetic, config):
-    """Load market data with fallback logic."""
-    if use_synthetic:
+    """Load market data with fallback logic.
+
+    On Streamlit Cloud, always routes to synthetic data because
+    yfinance is blocked on Cloud provider IPs.
+    """
+    if use_synthetic or IS_CLOUD:
+        if IS_CLOUD and not use_synthetic:
+            st.info(
+                "Running on Streamlit Cloud: live market data is unavailable. "
+                "Showing synthetic example data."
+            )
         return _load_synthetic(config)
 
-    market = _load_live_data(ticker, config)
+    try:
+        market = _load_live_data(ticker, config)
+    except Exception as exc:
+        st.warning(
+            f"yfinance error ({type(exc).__name__}): falling back to synthetic data."
+        )
+        return _load_synthetic(config)
+
     if market["chain"].empty:
         if config.get("data", {}).get("use_synthetic_fallback", True):
             st.warning("yfinance returned empty chain: using synthetic data.")
@@ -75,9 +98,14 @@ def main():
         st.markdown("---")
 
         ticker = st.text_input(
-            "Ticker", value=config.get("data", {}).get("default_ticker", "AAPL")
+            "Ticker", value=config.get("data", {}).get("default_ticker", "AAPL"),
+            disabled=IS_CLOUD,
         ).upper().strip()
-        use_synthetic = st.checkbox("Use synthetic data", value=False)
+        use_synthetic = st.checkbox(
+            "Use synthetic data",
+            value=IS_CLOUD,
+            disabled=IS_CLOUD,
+        )
         load_btn = st.button("Load Data", type="primary", use_container_width=True)
 
         st.markdown("---")
@@ -99,8 +127,12 @@ def main():
             unsafe_allow_html=True,
         )
         st.markdown("")
+        source_note = (
+            "Data: synthetic only (Cloud mode)."
+            if IS_CLOUD else "Data: yfinance (live) or synthetic."
+        )
         st.markdown(
-            "<small style='color:#475569;'>Data: yfinance (live) or synthetic.</small>",
+            f"<small style='color:#475569;'>{source_note}</small>",
             unsafe_allow_html=True,
         )
 
