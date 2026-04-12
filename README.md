@@ -53,7 +53,7 @@ Options pricing and Greeks calculator with Black-Scholes, CRR binomial tree, and
 
 ## Screenshot
 
-> *Screenshot placeholder, add after first deployment*
+![Dashboard](docs/screenshot.png)
 
 ---
 
