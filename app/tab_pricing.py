@@ -7,7 +7,7 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 from src import black_scholes as bs, model_comparison
-from app.style_inject import styled_card, apply_plotly_theme
+from app.style_inject import styled_card, apply_plotly_theme, TOKENS
 
 
 def render(state, config):
@@ -83,7 +83,7 @@ def render(state, config):
             name="Binomial price",
         ))
         fig_bt.add_hline(y=comp["bs_price"], line_dash="dash",
-                         annotation_text="BS price", line_color="#EF4444")
+                         annotation_text="BS price", line_color=TOKENS["accent_danger"])
         fig_bt.update_layout(
             title="Binomial Price vs Tree Steps",
             xaxis_title="Number of tree steps (N)",
@@ -116,7 +116,7 @@ def render(state, config):
             fillcolor="rgba(99,102,241,0.15)", name="95% CI",
         ))
         fig_mc.add_hline(y=comp["bs_price"], line_dash="dash",
-                         annotation_text="BS price", line_color="#EF4444")
+                         annotation_text="BS price", line_color=TOKENS["accent_danger"])
         fig_mc.update_layout(
             title="MC Price vs Number of Paths",
             xaxis_title="Number of simulation paths", yaxis_title="Option price ($)",

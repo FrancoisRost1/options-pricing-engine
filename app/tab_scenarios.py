@@ -7,7 +7,7 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 from src import black_scholes as bs, scenario_analysis as sa
-from app.style_inject import styled_card, apply_plotly_theme
+from app.style_inject import styled_card, apply_plotly_theme, TOKENS
 
 
 def render(state, config):
@@ -50,7 +50,7 @@ def render(state, config):
         z=grid["values"],
         x=spot_labels,
         y=vol_labels,
-        colorscale=[[0, "#EF4444"], [0.5, "#1E293B"], [1, "#10B981"]],
+        colorscale=[[0, TOKENS["accent_danger"]], [0.5, TOKENS["bg_elevated"]], [1, TOKENS["accent_success"]]],
         zmid=0,
         text=np.round(grid["values"], 2),
         texttemplate="$%{text:.2f}",
@@ -76,7 +76,7 @@ def render(state, config):
         "events but are not predictions. Values from config.yaml."
     )
 
-    preset_tabs = st.tabs(["Earnings", "Vol Crush", "Rate Hike"])
+    preset_tabs = st.tabs(["EARNINGS", "VOL CRUSH", "RATE HIKE"])
 
     exposure_notes = {
         "earnings": "Long call = long vega. Pre-earnings vol expansion benefits "

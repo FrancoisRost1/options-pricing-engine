@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from src import black_scholes as bs
-from app.style_inject import styled_card, apply_plotly_theme
+from app.style_inject import styled_card, apply_plotly_theme, TOKENS
 
 
 def render(state, config):
@@ -68,8 +68,8 @@ def render(state, config):
     with left:
         fig_d = go.Figure()
         fig_d.add_trace(go.Scatter(x=spots, y=delta_vals, name="Delta"))
-        fig_d.add_vline(x=S, line_dash="dot", line_color="#475569")
-        fig_d.add_vline(x=K, line_dash="dash", line_color="#EF4444",
+        fig_d.add_vline(x=S, line_dash="dot", line_color=TOKENS["text_muted"])
+        fig_d.add_vline(x=K, line_dash="dash", line_color=TOKENS["accent_danger"],
                         annotation_text="Strike")
         fig_d.update_layout(title="Delta vs Spot",
                             xaxis_title="Spot Price ($)", yaxis_title="Delta (per $1 spot)")
@@ -83,7 +83,7 @@ def render(state, config):
     with right:
         fig_g = go.Figure()
         fig_g.add_trace(go.Scatter(x=spots, y=gamma_vals, name="Gamma"))
-        fig_g.add_vline(x=K, line_dash="dash", line_color="#EF4444",
+        fig_g.add_vline(x=K, line_dash="dash", line_color=TOKENS["accent_danger"],
                         annotation_text="Strike")
         fig_g.update_layout(title="Gamma vs Spot",
                             xaxis_title="Spot Price ($)", yaxis_title="Gamma (per $1 spot)")
@@ -99,7 +99,7 @@ def render(state, config):
     with left2:
         fig_t = go.Figure()
         fig_t.add_trace(go.Scatter(x=spots, y=theta_vals, name="Theta"))
-        fig_t.add_vline(x=K, line_dash="dash", line_color="#EF4444",
+        fig_t.add_vline(x=K, line_dash="dash", line_color=TOKENS["accent_danger"],
                         annotation_text="Strike")
         fig_t.update_layout(title="Theta vs Spot (per calendar day)",
                             xaxis_title="Spot Price ($)", yaxis_title="Theta ($ per calendar day)")
@@ -113,7 +113,7 @@ def render(state, config):
     with right2:
         fig_v = go.Figure()
         fig_v.add_trace(go.Scatter(x=spots, y=vega_vals, name="Vega"))
-        fig_v.add_vline(x=K, line_dash="dash", line_color="#EF4444",
+        fig_v.add_vline(x=K, line_dash="dash", line_color=TOKENS["accent_danger"],
                         annotation_text="Strike")
         fig_v.update_layout(title="Vega vs Spot (per +1pp annualized vol)",
                             xaxis_title="Spot Price ($)", yaxis_title="Vega ($ per +0.01 annualized sigma)")

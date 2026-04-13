@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from src import black_scholes as bs, parity_check
-from app.style_inject import styled_card, apply_plotly_theme
+from app.style_inject import styled_card, apply_plotly_theme, TOKENS
 
 
 def _compute_atm_vol_per_expiry(df, S):
@@ -107,7 +107,7 @@ def render(state, config):
 
     with left:
         fig = go.Figure()
-        for ot, color in [("call", "#6366F1"), ("put", "#F59E0B")]:
+        for ot, color in [("call", TOKENS["accent_primary"]), ("put", TOKENS["accent_warning"])]:
             sub = valid[valid["option_type"] == ot]
             fig.add_trace(go.Scatter(
                 x=sub["mid"], y=sub["bs_price"], mode="markers",
@@ -116,7 +116,7 @@ def render(state, config):
         max_val = max(valid["mid"].max(), valid["bs_price"].max()) * 1.05
         fig.add_trace(go.Scatter(
             x=[0, max_val], y=[0, max_val], mode="lines",
-            line=dict(dash="dash", color="#475569"), name="45-degree",
+            line=dict(dash="dash", color=TOKENS["text_muted"]), name="45-degree",
         ))
         fig.update_layout(
             title=f"BS Price ({label}) vs Market Mid",

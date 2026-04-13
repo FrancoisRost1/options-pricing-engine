@@ -20,7 +20,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
 
-from app.style_inject import inject_styles, styled_header, styled_card
+from app.style_inject import inject_styles, styled_header, styled_card, styled_kpi, styled_divider, TOKENS
 from utils.config_loader import load_config
 from utils.env_detect import is_streamlit_cloud
 from src import synthetic_data, chain_filter, implied_vol
@@ -95,7 +95,7 @@ def main():
     # ── Sidebar ──────────────────────────────────────────────
     with st.sidebar:
         st.markdown("### Options Pricing Engine")
-        st.markdown("---")
+        styled_divider()
 
         ticker = st.text_input(
             "Ticker", value=config.get("data", {}).get("default_ticker", "AAPL"),
@@ -108,13 +108,15 @@ def main():
         )
         load_btn = st.button("Load Data", type="primary", use_container_width=True)
 
-        st.markdown("---")
+        styled_divider()
         st.markdown("### Model Limitations")
         st.markdown(
-            "<div style='background:#1A2236; border:1px solid rgba(148,163,184,0.12); "
-            "border-radius:10px; padding:12px; font-size:0.8rem; color:#94A3B8; "
-            "line-height:1.6;'>"
-            "<b style='color:#F59E0B;'>Know your assumptions:</b><br>"
+            f"<div style='background:{TOKENS['bg_elevated']}; "
+            f"border:1px solid {TOKENS['border_default']}; "
+            f"border-radius:{TOKENS['radius_md']}; padding:12px; "
+            f"font-size:0.8rem; color:{TOKENS['text_secondary']}; "
+            f"line-height:1.6;'>"
+            f"<b style='color:{TOKENS['accent_warning']};'>Know your assumptions:</b><br>"
             "- BS assumes constant vol (no smile)<br>"
             "- No jumps, no stochastic vol<br>"
             "- Continuous dividend yield (not discrete)<br>"
@@ -132,7 +134,7 @@ def main():
             if IS_CLOUD else "Data: yfinance (live) or synthetic."
         )
         st.markdown(
-            f"<small style='color:#475569;'>{source_note}</small>",
+            f"<small style='color:{TOKENS[\"text_muted\"]};'>{source_note}</small>",
             unsafe_allow_html=True,
         )
 
@@ -175,17 +177,21 @@ def main():
         f"{market['ticker']} | Source: {market['data_source']}",
     )
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Spot", f"${market['spot']:.2f}")
-    c2.metric("Risk-Free Rate", f"{market['risk_free_rate']:.2%}")
-    c3.metric("Div Yield", f"{market['dividend_yield']:.2%}")
     iv_chain = st.session_state.get("chain_iv")
     valid_iv = iv_chain["iv"].dropna() if iv_chain is not None and "iv" in iv_chain.columns else []
-    c4.metric("Valid IVs", f"{len(valid_iv)} / {len(st.session_state['filtered_chain'])}")
+    with c1:
+        styled_kpi("SPOT", f"${market['spot']:.2f}")
+    with c2:
+        styled_kpi("RISK-FREE RATE", f"{market['risk_free_rate']:.2%}")
+    with c3:
+        styled_kpi("DIV YIELD", f"{market['dividend_yield']:.2%}")
+    with c4:
+        styled_kpi("VALID IVS", f"{len(valid_iv)} / {len(st.session_state['filtered_chain'])}")
 
     # ── Tabs ─────────────────────────────────────────────────
     tabs = st.tabs([
-        "Chain Explorer", "Pricing", "Greeks", "Vol Surface",
-        "Model vs Market", "Scenarios", "Delta Hedge",
+        "CHAIN", "PRICING", "GREEKS", "VOL SURFACE",
+        "MODEL VS MARKET", "SCENARIOS", "DELTA HEDGE",
     ])
 
     with tabs[0]:

@@ -9,7 +9,7 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 from src import delta_hedge
-from app.style_inject import styled_card, apply_plotly_theme
+from app.style_inject import styled_card, apply_plotly_theme, TOKENS
 
 
 def render(state, config):
@@ -127,7 +127,7 @@ def render(state, config):
         fig_spot.add_trace(go.Scatter(
             x=daily["day"], y=daily["spot"], mode="lines", name="Spot",
         ))
-        fig_spot.add_hline(y=K, line_dash="dash", line_color="#EF4444",
+        fig_spot.add_hline(y=K, line_dash="dash", line_color=TOKENS["accent_danger"],
                            annotation_text="Strike")
         fig_spot.update_layout(
             title="Simulated Spot Path (GBM)",
