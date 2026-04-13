@@ -133,8 +133,9 @@ def main():
             "Data: synthetic only (Cloud mode)."
             if IS_CLOUD else "Data: yfinance (live) or synthetic."
         )
+        muted = TOKENS["text_muted"]
         st.markdown(
-            f"<small style='color:{TOKENS[\"text_muted\"]};'>{source_note}</small>",
+            f"<small style='color:{muted};'>{source_note}</small>",
             unsafe_allow_html=True,
         )
 
