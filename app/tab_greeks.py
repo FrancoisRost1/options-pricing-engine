@@ -74,7 +74,7 @@ def render(state, config):
         fig_d.update_layout(title="Delta vs Spot",
                             xaxis_title="Spot Price ($)", yaxis_title="Delta (per $1 spot)")
         apply_plotly_theme(fig_d)
-        st.plotly_chart(fig_d, use_container_width=True)
+        st.plotly_chart(fig_d, width="stretch")
         styled_card(
             "Delta measures directional exposure. It transitions from "
             "0 (OTM) to 1 (ITM) around the strike: steeper near ATM."
@@ -88,7 +88,7 @@ def render(state, config):
         fig_g.update_layout(title="Gamma vs Spot",
                             xaxis_title="Spot Price ($)", yaxis_title="Gamma (per $1 spot)")
         apply_plotly_theme(fig_g)
-        st.plotly_chart(fig_g, use_container_width=True)
+        st.plotly_chart(fig_g, width="stretch")
         styled_card(
             "Gamma peaks near ATM: short-dated ATM options are hardest "
             "to delta-hedge because their delta changes fastest."
@@ -104,7 +104,7 @@ def render(state, config):
         fig_t.update_layout(title="Theta vs Spot (per calendar day)",
                             xaxis_title="Spot Price ($)", yaxis_title="Theta ($ per calendar day)")
         apply_plotly_theme(fig_t)
-        st.plotly_chart(fig_t, use_container_width=True)
+        st.plotly_chart(fig_t, width="stretch")
         styled_card(
             "Theta is the daily cost of holding an option. Most negative "
             "near ATM: the price you pay for gamma exposure."
@@ -118,7 +118,7 @@ def render(state, config):
         fig_v.update_layout(title="Vega vs Spot (per +1pp annualized vol)",
                             xaxis_title="Spot Price ($)", yaxis_title="Vega ($ per +0.01 annualized sigma)")
         apply_plotly_theme(fig_v)
-        st.plotly_chart(fig_v, use_container_width=True)
+        st.plotly_chart(fig_v, width="stretch")
         styled_card(
             "Vega is sensitivity to implied vol changes. Peaks near ATM "
             "and increases with time to expiry."

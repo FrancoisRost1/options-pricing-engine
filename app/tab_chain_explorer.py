@@ -95,5 +95,5 @@ def render(state, config):
             lambda x: f"{x:.3f}" if not np.isnan(x) else ""
         )
 
-    st.dataframe(display, use_container_width=True, height=500)
+    st.dataframe(display, width="stretch", height=500)
     st.caption(f"Showing {len(display)} contracts | Spot: ${spot:.2f}")

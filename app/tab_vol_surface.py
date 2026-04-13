@@ -50,7 +50,7 @@ def render(state, config):
             height=550,
         )
         apply_plotly_theme(fig_3d)
-        st.plotly_chart(fig_3d, use_container_width=True)
+        st.plotly_chart(fig_3d, width="stretch")
         styled_card(
             "Empirical IV surface via cubic interpolation. NOT arbitrage-free "
             " shows market-observed skew and term structure."
@@ -81,7 +81,7 @@ def render(state, config):
                 yaxis_title="Implied Vol sigma (annualized)",
             )
             apply_plotly_theme(fig_smile)
-            st.plotly_chart(fig_smile, use_container_width=True)
+            st.plotly_chart(fig_smile, width="stretch")
             styled_card(
                 "Equity smile slopes down-left (put skew): deep OTM puts "
                 "trade at higher IV, reflecting crash protection demand."
@@ -103,7 +103,7 @@ def render(state, config):
                 yaxis_title="ATM Implied Vol sigma (annualized)",
             )
             apply_plotly_theme(fig_ts)
-            st.plotly_chart(fig_ts, use_container_width=True)
+            st.plotly_chart(fig_ts, width="stretch")
             styled_card(
                 "Upward-sloping in calm markets (more uncertainty over time). "
                 "Inverted when near-term event risk spikes IV at short maturities."
@@ -121,7 +121,7 @@ def render(state, config):
                 display[col] = display[col].apply(
                     lambda x: f"{x:.2%}" if not np.isnan(x) else ""
                 )
-        st.dataframe(display, use_container_width=True)
+        st.dataframe(display, width="stretch")
         styled_card(
             "25-delta RR measures skew direction (negative = steeper put skew). "
             "Butterfly measures smile curvature (positive = wings trade rich vs ATM). "

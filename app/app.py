@@ -106,7 +106,7 @@ def main():
             value=IS_CLOUD,
             disabled=IS_CLOUD,
         )
-        load_btn = st.button("Load Data", type="primary", use_container_width=True)
+        load_btn = st.button("Load Data", type="primary", width="stretch")
 
         styled_divider()
         st.markdown("### Model Limitations")

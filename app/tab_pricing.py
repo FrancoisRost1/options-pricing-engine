@@ -90,7 +90,7 @@ def render(state, config):
             yaxis_title="Option price ($)",
         )
         apply_plotly_theme(fig_bt)
-        st.plotly_chart(fig_bt, use_container_width=True)
+        st.plotly_chart(fig_bt, width="stretch")
 
         styled_card(
             "CRR trees show odd/even oscillation that dampens with more steps, "
@@ -122,7 +122,7 @@ def render(state, config):
             xaxis_title="Number of simulation paths", yaxis_title="Option price ($)",
         )
         apply_plotly_theme(fig_mc)
-        st.plotly_chart(fig_mc, use_container_width=True)
+        st.plotly_chart(fig_mc, width="stretch")
 
         styled_card(
             "More paths narrow the confidence interval. Control variates "

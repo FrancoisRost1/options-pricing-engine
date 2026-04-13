@@ -112,7 +112,7 @@ def render(state, config):
         yaxis_title="Cumulative P&L ($)",
     )
     apply_plotly_theme(fig_pnl)
-    st.plotly_chart(fig_pnl, use_container_width=True)
+    st.plotly_chart(fig_pnl, width="stretch")
     styled_card(
         "Gamma P&L comes from realized moves (good for long gamma). "
         "Theta P&L is the daily cost of carrying the position. "
@@ -134,7 +134,7 @@ def render(state, config):
             xaxis_title="Trading Day (t)", yaxis_title="Spot Price ($)",
         )
         apply_plotly_theme(fig_spot)
-        st.plotly_chart(fig_spot, use_container_width=True)
+        st.plotly_chart(fig_spot, width="stretch")
         styled_card(
             "GBM-simulated path used for this hedging simulation. "
             "In practice, use real historical prices when available."
@@ -150,7 +150,7 @@ def render(state, config):
             xaxis_title="Trading Day (t)", yaxis_title="Delta (per $1 spot)",
         )
         apply_plotly_theme(fig_delta)
-        st.plotly_chart(fig_delta, use_container_width=True)
+        st.plotly_chart(fig_delta, width="stretch")
         styled_card(
             "Delta drifts as spot moves and time passes (charm). "
             "The hedger adjusts stock holdings at each rebalance to track this."

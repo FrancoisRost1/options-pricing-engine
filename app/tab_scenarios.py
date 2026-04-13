@@ -63,7 +63,7 @@ def render(state, config):
         yaxis_title="Vol Change",
     )
     apply_plotly_theme(fig)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     styled_card(
         "Green = profit, red = loss. Rows are vol bumps, columns are spot moves. "
         "Use the time slider to see how theta decay shifts the surface."
@@ -110,5 +110,5 @@ def render(state, config):
                     "New Price": f"${row['new_price']:.4f}" if not np.isnan(row["new_price"]) else "",
                     "P&L": f"${row['pnl']:+.4f}" if not np.isnan(row["pnl"]) else "",
                 } for row in results],
-                use_container_width=True,
+                width="stretch",
             )

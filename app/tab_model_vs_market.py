@@ -123,7 +123,7 @@ def render(state, config):
             xaxis_title="Market Mid ($)", yaxis_title="BS Price ($)",
         )
         apply_plotly_theme(fig)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     # ── Error by moneyness bucket ────────────────────────────
     with right:
@@ -149,7 +149,7 @@ def render(state, config):
             yaxis_title="Error ($)",
         )
         apply_plotly_theme(fig_err)
-        st.plotly_chart(fig_err, use_container_width=True)
+        st.plotly_chart(fig_err, width="stretch")
         styled_card(
             "Wings show larger errors in flat-vol mode because the smile "
             "prices OTM puts richer (crash protection) than flat vol predicts."
@@ -190,4 +190,4 @@ def render(state, config):
             lambda x: f"${x:.4f}")
         disp["deviation_pct"] = disp["deviation_pct"].apply(
             lambda x: f"{x:.2%}")
-        st.dataframe(disp, use_container_width=True)
+        st.dataframe(disp, width="stretch")
