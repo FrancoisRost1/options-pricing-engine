@@ -3,7 +3,7 @@ Finite difference Greeks wrapper for Binomial and Monte Carlo models.
 
 Computes standard Greeks (Delta, Gamma, Theta, Vega, Rho) via central
 finite difference. Higher-order Greeks (Vanna, Volga, Charm) are NOT
-computed here — numerical noise makes them unreliable through
+computed here, numerical noise makes them unreliable through
 finite difference. Use Black-Scholes analytical for those.
 
 Central difference formula: (V(x+h) - V(x-h)) / (2h)
@@ -20,7 +20,7 @@ def _get_pricer(model):
     Return the pricing function for the specified model.
 
     Only binomial and MC use finite difference Greeks.
-    Black-Scholes Greeks are analytical — use black_scholes module directly.
+    Black-Scholes Greeks are analytical, use black_scholes module directly.
     """
     if model == "binomial":
         return _price_binomial
@@ -40,7 +40,7 @@ def _price_mc(S, K, T, r, sigma, q, option_type, exercise, config):
     """Wrapper for MC pricing with config-driven parameters.
 
     MC supports European options only. American exercise raises
-    ValueError — use binomial model for American Greeks.
+    ValueError, use binomial model for American Greeks.
     """
     if exercise == "american":
         raise ValueError(
@@ -66,7 +66,7 @@ def compute(S, K, T, r, sigma, q=0.0, option_type="call",
     Compute standard Greeks via central finite difference.
 
     Returns Delta, Gamma, Theta, Vega, Rho using bump-and-reprice.
-    Higher-order Greeks are intentionally excluded — they require
+    Higher-order Greeks are intentionally excluded, they require
     second-order finite differences that amplify numerical noise
     in tree and MC models.
 

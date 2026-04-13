@@ -45,9 +45,9 @@ def simulate_hedge(S_path, K, T, r, sigma, q=0.0, option_type="call",
 
     P&L decomposition isolates three components:
       1. Gamma/Theta: the theoretical P&L from holding gamma exposure
-         offset by theta decay — the core risk/reward of options
+         offset by theta decay, the core risk/reward of options
       2. Hedging error: the residual from discrete vs continuous
-         rebalancing — smaller with more frequent hedging
+         rebalancing, smaller with more frequent hedging
       3. Transaction costs: the drag from bid-ask spread and slippage
          on each rebalance
 
@@ -214,7 +214,7 @@ def generate_gbm_paths(S0, T, r, sigma, q=0.0, n_paths=100,
 
     When historical data is unavailable, these paths provide a
     controlled environment to study hedging dynamics under known
-    volatility — useful for isolating hedging error from vol
+    volatility, useful for isolating hedging error from vol
     misspecification.
     """
     if n_steps is None:

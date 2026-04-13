@@ -3,11 +3,11 @@ Cross-model price comparison and convergence analysis.
 
 Compares BS, Binomial, and MC prices for the same contract to
 verify model agreement. For European vanilla options, all three
-should converge to the same value — disagreements signal bugs
+should converge to the same value, disagreements signal bugs
 or insufficient steps/paths.
 
 Also provides convergence analysis: binomial price vs steps,
-MC price vs paths — demonstrating theoretical convergence
+MC price vs paths, demonstrating theoretical convergence
 properties that are interview gold.
 """
 

@@ -6,7 +6,7 @@ or extreme contracts from analysis. Filtered chains are used for
 model-vs-market comparison and vol surface construction; the raw
 chain remains available in the Chain Explorer tab.
 
-All thresholds are driven by config.yaml — never hardcoded.
+All thresholds are driven by config.yaml, never hardcoded.
 """
 
 import numpy as np
@@ -26,7 +26,7 @@ def apply_filters(chain_df: pd.DataFrame, config: dict) -> pd.DataFrame:
         config: Configuration dict with 'chain_filter' section.
 
     Returns:
-        Filtered DataFrame (copy — original is not modified).
+        Filtered DataFrame (copy, original is not modified).
     """
     if chain_df.empty:
         return chain_df.copy()
@@ -121,7 +121,7 @@ def filter_summary(raw_df: pd.DataFrame, filtered_df: pd.DataFrame) -> dict:
     Summary statistics comparing raw vs filtered chain.
 
     Useful for displaying how many contracts were removed
-    and why — helps users understand data quality.
+    and why, helps users understand data quality.
     """
     return {
         "raw_contracts": len(raw_df),

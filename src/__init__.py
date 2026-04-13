@@ -1,1 +1,1 @@
-"""Options Pricing Engine — source modules."""
+"""Options Pricing Engine, source modules."""

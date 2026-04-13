@@ -5,7 +5,7 @@ Finds the volatility sigma such that BS_price(sigma) = market_price.
 Uses scipy.optimize.brentq with configurable bounds and tolerance.
 
 Pre-solve validation ensures the market price is within arbitrage
-bounds before attempting to solve — this prevents wasting compute
+bounds before attempting to solve, this prevents wasting compute
 on contracts where no valid IV exists (e.g., price below intrinsic).
 
 Failure policy: return np.nan. Never fake-fill.
@@ -52,7 +52,7 @@ def extract(market_price, S, K, T, r, q=0.0, option_type="call",
 
     Uses Brent's method to find sigma where BS(sigma) = market_price.
     Brent's method is chosen because it is guaranteed to converge
-    when the function changes sign on the bracket — and option price
+    when the function changes sign on the bracket, and option price
     is monotonically increasing in sigma, so this is always satisfied
     when the market price is within arbitrage bounds.
 
@@ -106,7 +106,7 @@ def extract_chain(chain_df, S, r, q=0.0, config=None):
     Extract implied volatility for an entire options chain.
 
     Adds an 'iv' column to the DataFrame. Contracts where IV
-    extraction fails get np.nan — never fake-filled.
+    extraction fails get np.nan, never fake-filled.
 
     Args:
         chain_df: DataFrame with columns 'strike', 'mid', 'T',

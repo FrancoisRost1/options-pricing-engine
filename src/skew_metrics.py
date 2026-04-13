@@ -1,5 +1,5 @@
 """
-Volatility skew metrics — 25-delta risk reversal and butterfly.
+Volatility skew metrics, 25-delta risk reversal and butterfly.
 
 These metrics summarize the shape of the volatility smile:
   - Risk Reversal: measures skew direction (equity skew = negative RR)
@@ -26,7 +26,7 @@ def _find_delta_strike(target_delta, S, T, r, q, chain_df,
       BS_delta(S, K, T, r, sigma(K), q) = target_delta
 
     where sigma(K) is interpolated from the smile. This couples
-    the strike search with the vol smile — a key subtlety.
+    the strike search with the vol smile, a key subtlety.
 
     Args:
         target_delta: Desired delta (e.g., 0.25 for 25-delta call).

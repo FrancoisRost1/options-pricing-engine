@@ -1,11 +1,11 @@
 """
-P&L scenario analysis — heatmaps and presets.
+P&L scenario analysis, heatmaps and presets.
 
 Computes option value under hypothetical spot, vol, rate, and
 time changes. The heatmap axes are spot change (%) x vol change
 (vol points), with an optional time decay slider.
 
-Presets are mechanical — no fake macro storytelling. They apply
+Presets are mechanical, no fake macro storytelling. They apply
 specific bump combinations that correspond to common market events
 (earnings, vol crush, rate moves).
 """
@@ -74,7 +74,7 @@ def compute_time_decay(S, K, T, r, sigma, q=0.0, option_type="call",
     """
     Compute option value at different time horizons.
 
-    Shows how the P&L surface shifts as time passes — critical
+    Shows how the P&L surface shifts as time passes, critical
     for understanding theta decay and its interaction with spot
     and vol moves.
 
@@ -104,7 +104,7 @@ def apply_preset(S, K, T, r, sigma, q=0.0, option_type="call",
     Apply a scenario preset and compute resulting values.
 
     Presets define specific spot/vol/rate bumps that correspond
-    to common market events. Values are mechanical — the names
+    to common market events. Values are mechanical, the names
     are labels, not predictions.
 
     Args:

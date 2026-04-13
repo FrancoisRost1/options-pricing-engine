@@ -3,15 +3,15 @@ Monte Carlo option pricer with variance reduction.
 
 Simulates GBM paths to price European options. Includes two
 variance reduction techniques:
-  1. Antithetic variates — for each random draw Z, also simulate -Z
-  2. Control variate — use BS analytical price as control to reduce
+  1. Antithetic variates, for each random draw Z, also simulate -Z
+  2. Control variate, use BS analytical price as control to reduce
      estimation error
 
 MC is not needed for vanilla European options (BS is exact). It is
 implemented as a foundation for path-dependent extensions and to
 demonstrate variance reduction techniques.
 
-European options only in v1 — no Longstaff-Schwartz for American.
+European options only in v1, no Longstaff-Schwartz for American.
 """
 
 import numpy as np
@@ -180,7 +180,7 @@ def price_variance_comparison(S, K, T, r, sigma, q=0.0,
     """
     Compare standard MC vs antithetic vs control variate.
 
-    Demonstrates the variance reduction effect — same number
+    Demonstrates the variance reduction effect, same number
     of paths but progressively tighter confidence intervals.
 
     Returns:

@@ -1,5 +1,5 @@
 """
-Data loader — fetches options chains, spot prices, risk-free rates,
+Data loader, fetches options chains, spot prices, risk-free rates,
 and dividend yields from yfinance.
 
 Handles the full data pipeline: fetch → validate → compute mid price →
@@ -55,7 +55,7 @@ def fetch_risk_free_rate(dte: int, config: dict) -> float:
     CRITICAL: yfinance returns rates as percentages (e.g., 4.5 for 4.5%).
     Must divide by 100 before use as a decimal rate.
 
-    Simplifying assumption: flat yield curve — we pick one tenor
+    Simplifying assumption: flat yield curve, we pick one tenor
     based on DTE bucket, not a full interpolated term structure.
     """
     rf_cfg = config.get("risk_free_rate", {})
@@ -107,7 +107,7 @@ def fetch_dividend_yield(ticker: str, spot: float, config: dict) -> float:
                 import warnings
                 warnings.warn(
                     f"Dividend yield {q:.2%} from trailingAnnualDividendRate "
-                    f"looks high — using fallback {fallback:.2%}",
+                    f"looks high, using fallback {fallback:.2%}",
                     stacklevel=2,
                 )
                 return fallback
@@ -118,7 +118,7 @@ def fetch_dividend_yield(ticker: str, spot: float, config: dict) -> float:
         if trailing_yield and 0 < trailing_yield < 0.15:
             return float(trailing_yield)
 
-        # SKIP dividendYield — yfinance returns it inconsistently
+        # SKIP dividendYield, yfinance returns it inconsistently
         # (sometimes percentage form e.g. 0.41 meaning 41%, sometimes
         # decimal 0.0041). Too unreliable to use without validation.
     except Exception:

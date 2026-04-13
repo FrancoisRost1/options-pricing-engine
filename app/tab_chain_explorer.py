@@ -1,5 +1,5 @@
 """
-Tab 1: Chain Explorer — browse the raw and filtered options chain.
+Tab 1: Chain Explorer, browse the raw and filtered options chain.
 
 Entry point for the dashboard. Shows the full options chain with
 filters for expiry, moneyness, and liquidity. Smart defaults

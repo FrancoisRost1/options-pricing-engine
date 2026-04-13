@@ -1,5 +1,5 @@
 """
-Options Pricing Engine — Streamlit Dashboard (7 tabs).
+Options Pricing Engine, Streamlit Dashboard (7 tabs).
 
 Launch from project root: streamlit run app/app.py
 
@@ -15,7 +15,7 @@ from pathlib import Path
 import streamlit as st
 import numpy as np
 
-# CWD bootstrap — ensure project root is CWD and on sys.path
+# CWD bootstrap, ensure project root is CWD and on sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)

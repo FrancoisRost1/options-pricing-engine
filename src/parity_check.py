@@ -6,7 +6,7 @@ Verifies the fundamental no-arbitrage relationship:
 
 This must hold for European options. Violations signal either
 data quality issues (stale quotes, wrong mid prices) or
-genuine mispricings. American options are excluded — early
+genuine mispricings. American options are excluded, early
 exercise premium breaks parity.
 """
 

@@ -1,10 +1,10 @@
 """
-Tab 5: Model vs Market — price comparison scatter, error breakdown
+Tab 5: Model vs Market, price comparison scatter, error breakdown
 by moneyness x maturity, and put-call parity validation.
 
 Two modes:
-  A) Calibration check — reprice with each contract's own IV (circular, should be ~0)
-  B) Flat vol test — price all contracts with ATM vol per expiry (meaningful test)
+  A) Calibration check, reprice with each contract's own IV (circular, should be ~0)
+  B) Flat vol test, price all contracts with ATM vol per expiry (meaningful test)
 """
 
 import streamlit as st

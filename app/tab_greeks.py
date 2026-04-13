@@ -1,5 +1,5 @@
 """
-Tab 3: Greeks — Greeks table, profiles vs spot, and higher-order
+Tab 3: Greeks, Greeks table, profiles vs spot, and higher-order
 Greeks (BS analytical only). Every chart gets an interpretation callout.
 """
 

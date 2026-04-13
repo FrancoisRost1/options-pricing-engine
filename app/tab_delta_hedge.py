@@ -1,7 +1,7 @@
 """
-Tab 7: Delta Hedge — hedging simulation with P&L decomposition.
+Tab 7: Delta Hedge, hedging simulation with P&L decomposition.
 
-Illustrates discrete hedging replication — NOT a profitable strategy.
+Illustrates discrete hedging replication, NOT a profitable strategy.
 Shows how gamma/theta, hedging error, and TC interact.
 """
 

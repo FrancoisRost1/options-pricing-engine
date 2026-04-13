@@ -6,7 +6,7 @@ unavailable or for testing. Prices are generated using
 Black-Scholes with configurable skew, then bid/ask spreads
 are added with random noise.
 
-This is a FALLBACK data source — clearly labeled as synthetic
+This is a FALLBACK data source, clearly labeled as synthetic
 in all downstream outputs.
 """
 
@@ -71,7 +71,7 @@ def generate_chain(config: dict) -> dict:
                 ask = bid + spread
                 mid = (bid + ask) / 2.0
 
-                # Synthetic volume/OI — higher for ATM, lower for wings
+                # Synthetic volume/OI, higher for ATM, lower for wings
                 moneyness_penalty = np.exp(-5.0 * log_m ** 2)
                 volume = max(int(rng.poisson(500 * moneyness_penalty)), 0)
                 oi = max(int(rng.poisson(2000 * moneyness_penalty)), 0)

@@ -1,5 +1,5 @@
 """
-Tab 2: Pricing — single-option pricer, cross-model comparison,
+Tab 2: Pricing, single-option pricer, cross-model comparison,
 and convergence analysis (binomial steps + MC paths).
 """
 

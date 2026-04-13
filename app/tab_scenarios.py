@@ -1,5 +1,5 @@
 """
-Tab 6: Scenario Analysis — P&L heatmap (spot x vol), time decay
+Tab 6: Scenario Analysis, P&L heatmap (spot x vol), time decay
 slider, and mechanical presets (earnings, vol crush, rate hike).
 """
 

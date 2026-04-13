@@ -1,5 +1,5 @@
 """
-Tab 4: Volatility Surface — 3D surface, smile per expiry,
+Tab 4: Volatility Surface, 3D surface, smile per expiry,
 ATM term structure, and skew metrics (25-delta RR & butterfly).
 """
 

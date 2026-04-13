@@ -3,7 +3,7 @@ Empirical implied volatility surface construction.
 
 Builds an IV surface from filtered options chain data using
 interpolation/smoothing. This is NOT an arbitrage-free calibrated
-surface (no SVI, no arbitrage constraints in v1) — it is an
+surface (no SVI, no arbitrage constraints in v1), it is an
 empirical visualization tool.
 
 Axes: log-moneyness ln(K/S) x time to expiry (years).
@@ -21,7 +21,7 @@ def build_surface(chain_df: pd.DataFrame, config: dict) -> dict:
     Requires the chain to have 'log_moneyness', 'T', and 'iv'
     columns (IV must be pre-extracted via implied_vol module).
 
-    The surface is an empirical interpolation — it will show the
+    The surface is an empirical interpolation, it will show the
     actual market skew and term structure but does not enforce
     no-arbitrage conditions (calendar spread or butterfly).
 
@@ -87,7 +87,7 @@ def smile_per_expiry(chain_df: pd.DataFrame) -> dict:
 
     Returns a dict keyed by expiry date, each containing arrays
     of log_moneyness and implied vol. Used for 2D smile overlay
-    plots — the classic way to visualize skew.
+    plots, the classic way to visualize skew.
     """
     df = chain_df.dropna(subset=["iv", "log_moneyness"]).copy()
     df = df[(df["iv"] >= 0.01) & (df["iv"] <= 3.0)]

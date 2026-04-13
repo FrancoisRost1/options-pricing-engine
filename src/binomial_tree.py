@@ -3,7 +3,7 @@ Cox-Ross-Rubinstein (CRR) binomial tree pricer.
 
 Prices European and American calls and puts via backward induction
 on a recombining binomial lattice. American options check for early
-exercise at every node — this is the only model in the engine that
+exercise at every node, this is the only model in the engine that
 handles American exercise.
 
 CRR parameterization ensures the tree recombines (u*d = 1) and
@@ -25,7 +25,7 @@ def price(S, K, T, r, sigma, q=0.0, option_type="call",
 
     For American options, at each node we compare the continuation
     value (discounted expected value) with the immediate exercise
-    value and take the maximum — this captures the early exercise
+    value and take the maximum, this captures the early exercise
     premium that makes American options worth more than European.
 
     Args:

@@ -6,7 +6,7 @@ calls and puts with continuous dividend yield. All standard Greeks
 (Delta, Gamma, Theta, Vega, Rho) plus higher-order Greeks (Vanna,
 Volga/Vomma, Charm) are computed analytically.
 
-Assumes log-normal returns (GBM) — no jumps, no stochastic vol.
+Assumes log-normal returns (GBM), no jumps, no stochastic vol.
 """
 
 import numpy as np
@@ -89,7 +89,7 @@ def gamma(S, K, T, r, sigma, q=0.0, option_type="call"):
     Gamma: rate of change of delta per $1 move in spot.
 
     Gamma is identical for calls and puts (put-call parity).
-    Peaks near ATM and near expiry — this is why short-dated
+    Peaks near ATM and near expiry, this is why short-dated
     ATM options are hardest to delta-hedge.
     """
     if not _validate_inputs(S, K, T, r, sigma, q):
@@ -103,7 +103,7 @@ def theta(S, K, T, r, sigma, q=0.0, option_type="call"):
     """
     Theta: time decay per CALENDAR day (annualized derivative / 365).
 
-    Theta is almost always negative for long options — the option
+    Theta is almost always negative for long options, the option
     loses value as time passes (all else equal). This is the
     'price' the option buyer pays for convexity (gamma).
     """
@@ -132,7 +132,7 @@ def vega(S, K, T, r, sigma, q=0.0, option_type="call"):
     Vega: sensitivity to +1 vol point (+0.01 in sigma).
 
     Vega is identical for calls and puts. Peaks near ATM and
-    increases with time to expiry — longer-dated options are
+    increases with time to expiry, longer-dated options are
     more sensitive to vol changes.
     """
     if not _validate_inputs(S, K, T, r, sigma, q):
@@ -166,7 +166,7 @@ def vanna(S, K, T, r, sigma, q=0.0, option_type="call"):
 
     Measures how delta changes when vol moves. Important for
     understanding how hedging costs change in a vol event.
-    Analytical BS only — unreliable via finite difference.
+    Analytical BS only, unreliable via finite difference.
     """
     if not _validate_inputs(S, K, T, r, sigma, q):
         return np.nan
@@ -183,7 +183,7 @@ def volga(S, K, T, r, sigma, q=0.0, option_type="call"):
 
     Measures convexity of option price with respect to vol.
     Positive volga means the option benefits from vol-of-vol.
-    Analytical BS only — unreliable via finite difference.
+    Analytical BS only, unreliable via finite difference.
     """
     if not _validate_inputs(S, K, T, r, sigma, q):
         return np.nan
@@ -197,12 +197,12 @@ def volga(S, K, T, r, sigma, q=0.0, option_type="call"):
 
 def charm(S, K, T, r, sigma, q=0.0, option_type="call"):
     """
-    Charm: dDelta/dT — how delta changes as time passes.
+    Charm: dDelta/dT, how delta changes as time passes.
 
     Critical for understanding overnight delta drift. A hedger
     who rebalances daily needs to know how much their delta
     shifts just from the passage of one day.
-    Analytical BS only — unreliable via finite difference.
+    Analytical BS only, unreliable via finite difference.
     """
     if not _validate_inputs(S, K, T, r, sigma, q):
         return np.nan
