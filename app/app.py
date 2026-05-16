@@ -108,6 +108,18 @@ def main():
         )
         load_btn = st.button("Load Data", type="primary", width="stretch")
 
+        if IS_CLOUD:
+            styled_card(
+                "<b style='color:" + TOKENS["accent_warning"] + ";'>"
+                "Cloud demo uses a synthetic chain.</b><br>"
+                "Live yfinance option chains are blocked on Streamlit Cloud "
+                "IPs, so this deploy prices a deterministic GBM-generated "
+                "chain. Every pricing model, Greek, IV solve, and surface is "
+                "fully live, only the input quotes are synthetic. Run locally "
+                "for real market chains.",
+                accent_color=TOKENS["accent_warning"],
+            )
+
         styled_divider()
         st.markdown("### Model Limitations")
         st.markdown(
